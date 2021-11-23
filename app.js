@@ -59,12 +59,26 @@ function getDigits(numValue) { // sets the first and second digits for the maths
         return;
     } 
     firstDigits += numValue;
-    return;
 }
 
 function setSign(signValue) { // set the operator
     operatorSign = signValue;
     isSginSet = true;
+}
+
+function addDot() {
+    if (isSginSet) {
+        if (secondDigits.indexOf('.') < 0) {
+            secondDigits += '.';
+            calDisplay.textContent += '.'
+        }
+        return;
+    }
+    if(firstDigits.indexOf('.') < 0) {
+        firstDigits += '.'
+        calDisplay.textContent += '.';
+    }
+
 }
 
 function clearAll() { // resests the values
@@ -86,24 +100,24 @@ numbers.addEventListener('click', (e) => {
         calDisplay.textContent += btnValue;
         getDigits(btnValue);
     }   
-    return;
 });
 
 operators.addEventListener('click', (e) => {
     if (e.target.tagName === 'BUTTON') {
-        let btnValue = e.target.textContent;
-        calDisplay.textContent = firstDigits + btnValue;;
-
-        if (firstDigits && secondDigits) {
-            total = operate(operatorSign, firstDigits, secondDigits);
-            firstDigits = total;
-            secondDigits = '';
-            calDisplay.textContent = firstDigits + btnValue;
+        if (firstDigits) {
+            let btnValue = e.target.textContent;
+            calDisplay.textContent = firstDigits + btnValue;;
+    
+            if (firstDigits && secondDigits) {
+                total = operate(operatorSign, firstDigits, secondDigits);
+                firstDigits = total;
+                secondDigits = '';
+                calDisplay.textContent = firstDigits + btnValue;
+            }
+    
+            setSign(btnValue);
         }
-
-        setSign(btnValue);
     }   
-    return; 
 });
 
 equalSign.addEventListener('click', (e) => {
@@ -119,3 +133,12 @@ clearBtn.addEventListener('click', (e) => {
     clearAll();
     calDisplay.textContent = '0';
 });
+
+dotNegativePlus.addEventListener('click', (e) => {
+    if (e.target.tagName === 'BUTTON') {
+        let btnClassName = e.target.className;
+        if(btnClassName === 'dot') {
+            addDot();
+        }
+    }
+})
