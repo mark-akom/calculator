@@ -6,7 +6,8 @@ const numbers = document.querySelector('.numbers');
 const operators = document.querySelector('.operators');
 const equalSign = document.querySelector('.equal-btn');
 const clearBtn = document.querySelector('.clear-btn');
-const dotNegativePlus = document.querySelector('.dot-negative-plus');
+const dotBtn = document.querySelector('.dot');
+const deleteBtn = document.querySelector('.delete');
 
 
 let firstDigits = '';
@@ -38,27 +39,40 @@ function divide(num1, num2) {
 function operate(operator, num1, num2) { // performs the basic maths operations
     num1 = Number(num1);
     num2 = Number(num2);
+    let total = 0;
     switch (operator) {
         case '+':
-            return add(num1, num2);
+            total = add(num1, num2);
+            break;
         case '-':
-            return subtract(num1, num2);
+            total = subtract(num1, num2);
+            break;
         case '*':
-            return multiply(num1, num2);         
+            total = multiply(num1, num2);         
+            break
         case '/':
-            return divide(num1, num2);    
+            total = divide(num1, num2);    
+            break;
         default:
             console.log('Invalid operation');
             break;
+    }
+
+    if (total % 1 === 0) {
+        return total;
+    } else {
+        return total.toFixed(2);
     }
 }
 
 function getDigits(numValue) { // sets the first and second digits for the maths operation
     if (isSginSet) {
         secondDigits += numValue;
+        calDisplay.textContent = `${firstDigits} ${operatorSign} ${secondDigits}`;
         return;
     } 
     firstDigits += numValue;
+    calDisplay.textContent = `${firstDigits}`;
 }
 
 function setSign(signValue) { // set the operator
@@ -81,6 +95,24 @@ function addDot() {
 
 }
 
+function deleteInput() {
+    if (secondDigits) {
+        secondDigits = secondDigits.slice(0, secondDigits.length - 1);
+        calDisplay.textContent = `${firstDigits} ${operatorSign} ${secondDigits}`;
+    } else if(operatorSign) {
+        operatorSign = '';
+        isSginSet = false;
+        calDisplay.textContent = `${firstDigits}`;
+    } else {
+        firstDigits = firstDigits.slice(0, firstDigits.length - 1);
+        calDisplay.textContent = `${firstDigits}`;
+
+        if (firstDigits === '') {
+            calDisplay.textContent = '0';
+        }
+    }
+}
+
 function clearAll() { // resests the values
     isSginSet = false;
     firstDigits = '';
@@ -96,8 +128,6 @@ numbers.addEventListener('click', (e) => {
         if (!firstDigits) {
             calDisplay.textContent = '';
         }
-
-        calDisplay.textContent += btnValue;
         getDigits(btnValue);
     }   
 });
@@ -106,13 +136,13 @@ operators.addEventListener('click', (e) => {
     if (e.target.tagName === 'BUTTON') {
         if (firstDigits) {
             let btnValue = e.target.textContent;
-            calDisplay.textContent = firstDigits + btnValue;;
+            calDisplay.textContent = `${firstDigits} ${btnValue}`;
     
             if (firstDigits && secondDigits) {
                 total = operate(operatorSign, firstDigits, secondDigits);
                 firstDigits = total;
                 secondDigits = '';
-                calDisplay.textContent = firstDigits + btnValue;
+                calDisplay.textContent = `${firstDigits} ${btnValue}`;
             }
     
             setSign(btnValue);
@@ -134,11 +164,10 @@ clearBtn.addEventListener('click', (e) => {
     calDisplay.textContent = '0';
 });
 
-dotNegativePlus.addEventListener('click', (e) => {
-    if (e.target.tagName === 'BUTTON') {
-        let btnClassName = e.target.className;
-        if(btnClassName === 'dot') {
-            addDot();
-        }
-    }
+dotBtn.addEventListener('click', (e) => {
+    addDot()
+});
+
+deleteBtn.addEventListener('click', (e) => {
+    deleteInput();
 })
